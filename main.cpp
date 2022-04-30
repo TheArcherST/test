@@ -1,45 +1,64 @@
-#include <fstream>
 #include <iostream>
-#include <string>
-#include <malloc/malloc.h>
-
 
 using namespace std;
 
+int BIN_SIZE = sizeof(int) * 8;
 
-void writeIntoFile (string path, string* content, int content_length) {
-    ofstream stream {path};
-    
-    for (int i = 0; i < content_length; i++) {
-        cout << content[i] << endl;
-        stream << content[i] << endl;
-    }
-    
-    stream.close();
-}
 
-string* readFromFile (string path) {
-    int length = 0;
-    fstream stream {path};
-    string buff;
-    while (getline(stream, buff)) {
-        length++;
+int pow (int a, int b) {
+    int result = 1;
+    for (int i = 0; i < b; i++) {
+        result *= a;
     }
-    stream.close();
-    stream.open(path);
-    string* result = new string[length];
-    int counter = 0;
-    while (getline(stream, buff)) {
-        result[counter++] = buff;
-    }
-    stream.close();
     return result;
 }
 
 
+bool* decimal2binary (int decimal) {
+    bool* result = new bool[BIN_SIZE] {};
+    
+    int i = 0;
+    while (decimal) {
+        result[BIN_SIZE - i++] = decimal % 2;
+        decimal /= 2;
+    }
+
+    return result;
+}
+
+
+int binary2decimal (bool arr[BIN_SIZE]) {
+    int result = 0;
+    
+    for (int i = 0; i < BIN_SIZE; i++) {
+        if (arr[BIN_SIZE - i]) result += pow(2, i);
+    }
+    
+    return result;
+}
+
+
+void printBinary (bool arr[BIN_SIZE]) {
+    bool flag = false;
+    
+    for (int i = 0; i < BIN_SIZE; i++) {
+        if (arr[i]) flag = true;
+        if (flag) cout << arr[i] << ' ';
+    }
+}
+
+
+
 int main() {
-    string path = "/Users/mihailsapovalov/Desktop/C++/itstep/itstep/itstep/Empty.txt";
-    int size = 2;
-    string* content = new string[size] {"123", "12343"};
-    writeIntoFile(path, content, size);
+    for (int i = 0; i < 999; i++) {
+        int a = binary2decimal(decimal2binary(i));
+        int b = i;
+        
+        if (a != b) {
+            cout << "Test#" << i << " failed, " << a << " != " << b << endl;
+            return -1;
+        }
+    }
+    
+    cout << "All tests passed" << endl;
 }
